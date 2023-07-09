@@ -1,31 +1,31 @@
-// // import React from "react";
-// // // import { BrowserRouter as Router, Route } from "react-router-dom";
-// // // import { Routes } from "react-router-dom";
-// // // import User1 from "./User1";
-// // // import User2 from "./User2";
-// // import { Link } from "react-router-dom";
+// import React from "react";
+// import { BrowserRouter as Router, Route } from "react-router-dom";
+// import { Routes } from "react-router-dom";
+// import User1 from "./User1";
+// import User2 from "./User2";
+// import { Link } from "react-router-dom";
 
-// // const App = () => {
-// //   return (
-// //     // <Router>
-// //     <div>
-// //       <h1>Welcome to My Home Automation App</h1>
-// //       {/* <Routes>
-// //         <Route path="/User-1" component={User1} />
-// //         <Route path="/User-2" component={User2} />
-// //       </Routes> */}
-// //       <Link to="/User-1">
-// //         <button>Go to User 1</button>
-// //       </Link>
-// //       <Link to="/User-2">
-// //         <button>Go to User 2</button>
-// //       </Link>
-// //     </div>
-// //     // </Router>
-// //   );
-// // };
+// const App = () => {
+//   return (
+//     <Router>
+//       <div>
+//         <h1>Welcome to My Home Automation App</h1>
+//         {/* <Routes>
+//           <Route path="/User-1" component={User1} />
+//           <Route path="/User-2" component={User2} />
+//         </Routes> */}
+//         <Link to="/User-1">
+//           <button>Go to User 1</button>
+//         </Link>
+//         <Link to="/User-2">
+//           <button>Go to User 2</button>
+//         </Link>
+//       </div>
+//     </Router>
+//   );
+// };
 
-// // export default App;
+// export default App;
 
 // import "./App.css";
 // import io from "socket.io-client";
@@ -42,6 +42,7 @@
 //   const [messageReceived, setMessageReceived] = useState("");
 
 //   const joinRoom = () => {
+//     console.log("sdsd");
 //     if (room !== "") {
 //       socket.emit("join_room", room);
 //     }
@@ -145,48 +146,79 @@
 
 // export default App;
 
-import React, { useEffect } from "react";
-import { Provider } from "react-redux";
-import { configureStore } from "@reduxjs/toolkit";
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import lightReducer from "./reducers";
-import { io } from "socket.io-client";
-import User1 from "./User1";
-import User2 from "./User2";
+// import React, { useEffect } from "react";
+// import { Provider } from "react-redux";
+// import { configureStore } from "@reduxjs/toolkit";
+// import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+// import lightReducer from "./reducers";
+// import { io } from "socket.io-client";
+// import User1 from "./User1";
+// import User2 from "./User2";
+// import { Link } from "react-router-dom";
 
-const socket = io("http://localhost:3001");
+// const socket = io("http://localhost:3001");
 
-const store = configureStore({
-  reducer: lightReducer,
-});
-const App = () => {
-  useEffect(() => {
-    socket.on("lightStatus", (data) => {
-      store.dispatch({ type: "TURN_ON_LIGHT", payload: data });
-    });
-  }, []);
+// const store = configureStore({
+//   reducer: lightReducer,
+// });
+// const App = () => {
+//   useEffect(() => {
+//     socket.on("lightStatus", (data) => {
+//       store.dispatch({ type: "TURN_ON_LIGHT", payload: data });
+//     });
+//   }, []);
 
+//   return (
+//     // <Provider store={store}>
+//     //   <Router>
+//     //     <Routes>
+//     //       <Route path="/User-1" component={User1} />
+//     //       <Route path="/User-2" component={User2} />
+//     //     </Routes>
+//     //   </Router>
+//     // </Provider>
+//     // <h1>home page</h1>
+
+//     // <Provider store={store}>
+//     //   {/* <Router> */}
+//     //   <Routes>
+//     //     <Route path="/User-1" component={User1} />
+//     //     <Route path="/User-2" component={User2} />
+//     //     {/* Add a default route or a "not found" page */}
+//     //     <Route path="*">{/* <div>Page Not Found</div> */}</Route>
+//     //   </Routes>
+//     //   {/* </Router> */}
+//     // </Provider>
+
+//     <Router>
+//       <div>
+//         <h1>Welcome to My Home Automation App</h1>
+//         <Routes>
+//           <Route path="/User-1" component={User1} />
+//           <Route path="/User-2" component={User2} />
+//         </Routes>
+//         <Link to="/User-1">
+//           <button>Go to User 1</button>
+//         </Link>
+//         <Link to="/User-2">
+//           <button>Go to User 2</button>
+//         </Link>
+//       </div>
+//     </Router>
+//   );
+// };
+
+// export default App;
+
+import "./App.css";
+import AllRoutes from "./components/AllRoutes";
+
+function App() {
   return (
-    <Provider store={store}>
-      <Router>
-        <Routes>
-          <Route path="/User-1" component={User1} />
-          <Route path="/User-2" component={User2} />
-        </Routes>
-      </Router>
-    </Provider>
-
-    // <Provider store={store}>
-    //   {/* <Router> */}
-    //   <Routes>
-    //     <Route path="/User-1" component={User1} />
-    //     <Route path="/User-2" component={User2} />
-    //     {/* Add a default route or a "not found" page */}
-    //     <Route path="*">{/* <div>Page Not Found</div> */}</Route>
-    //   </Routes>
-    //   {/* </Router> */}
-    // </Provider>
+    <div className="App">
+      <AllRoutes />
+    </div>
   );
-};
+}
 
 export default App;

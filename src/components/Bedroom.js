@@ -1,115 +1,81 @@
-// import React, { useState, useEffect } from "react";
-// import { useDispatch, useSelector } from "react-redux";
-// import {
-//   turnOnBedroomLight,
-//   turnOffBedroomLight,
-//   toggleBothBedroomLights,
-// } from "../actions";
-// import Light from "./Light";
-// import Button from "./Button";
-// import io from "socket.io-client";
-
-// const Bedroom = () => {
-//   const dispatch = useDispatch();
-//   const bedroomLight = useSelector((state) => state.bedroomLight);
-//   const [error, setError] = useState(null);
-
-//   useEffect(() => {
-//     const socket = io("http://localhost:3001", { transports: ["websocket"] });
-
-//     socket.on("connect_error", (error) => {
-//       setError(error.message);
-//     });
-
-//     socket.on("bedroomLightStatus", (isOn) => {
-//       if (isOn) {
-//         dispatch(turnOnBedroomLight());
-//       } else {
-//         dispatch(turnOffBedroomLight());
-//       }
-//     });
-
-//     return () => {
-//       socket.disconnect();
-//     };
-//   }, [dispatch]);
-
-//   const handleTurnOn = () => {
-//     dispatch(turnOnBedroomLight());
-//   };
-
-//   const handleTurnOff = () => {
-//     dispatch(turnOffBedroomLight());
-//   };
-
-//   const handleToggleBoth = () => {
-//     dispatch(toggleBothBedroomLights());
-//   };
-
-//   if (error) {
-//     return <div>Error: {error}</div>;
-//   }
-
-//   return (
-//     <div>
-//       <h2>Bedroom</h2>
-//       <Light isOn={bedroomLight} />
-//       <Button label="Turn On" onClick={handleTurnOn} />
-//       <Button label="Turn Off" onClick={handleTurnOff} />
-//       <Button label="Both On" onClick={handleToggleBoth} />
-//     </div>
-//   );
-// };
-
-// export default Bedroom;
-
 import React from "react";
 import { connect } from "react-redux";
-import { turnOnLight, turnOffLight, toggleBothLights } from "../actions";
-
-const Bedroom = ({
-  light1,
-  light2,
-  turnOnLight,
-  turnOffLight,
+import {
+  toggleLight1,
+  toggleLight2,
   toggleBothLights,
-}) => {
+} from "./Redux/bedroomActions";
+import socketIOClient from "socket.io-client";
+import { useEffect } from "react";
+let socket;
+
+const Bedroom = (props) => {
+  const {
+    light1Status,
+    light2Status,
+    toggleLight1,
+    toggleLight2,
+    toggleBothLights,
+  } = props;
+
+  useEffect(() => {
+    socket = socketIOClient("http://localhost:3001");
+
+    return () => {
+      socket.disconnect();
+    };
+  }, []);
+  useEffect(() => {
+    socket.on("bedroomStatus", (data) => {
+      console.log(data);
+    });
+  });
+  //   console.log("hhfdjf");
+  const lightOneToggle = () => {
+    socket.emit("bedroom", {
+      light1: !light1Status,
+      light2: light2Status,
+    });
+    toggleLight1();
+  };
+  const lightTwoToggle = () => {
+    socket.emit("bedroom", {
+      light1: light1Status,
+      light2: !light2Status,
+    });
+    toggleLight2();
+  };
+  const lightBothToggle = () => {
+    socket.emit("bedroom", {
+      light1: !light1Status,
+      light2: !light1Status,
+    });
+    toggleLight1();
+    toggleLight2();
+  };
+
   return (
     <div>
       <h2>Bedroom</h2>
-      <div>
-        <p>Light 1: {light1 ? "On" : "Off"}</p>
-        <button onClick={() => turnOnLight("bedroom", "light1")}>
-          Turn On
-        </button>
-        <button onClick={() => turnOffLight("bedroom", "light1")}>
-          Turn Off
-        </button>
-      </div>
-      <div>
-        <p>Light 2: {light2 ? "On" : "Off"}</p>
-        <button onClick={() => turnOnLight("bedroom", "light2")}>
-          Turn On
-        </button>
-        <button onClick={() => turnOffLight("bedroom", "light2")}>
-          Turn Off
-        </button>
-      </div>
-      <div>
-        <button onClick={() => toggleBothLights("bedroom")}>Both On</button>
-      </div>
+      <p>Light 1 Status: {light1Status ? "On" : "Off"}</p>
+      <button onClick={lightOneToggle}>Toggle Light 1</button>
+
+      <p>Light 2 Status: {light2Status ? "On" : "Off"}</p>
+      <button onClick={lightTwoToggle}>Toggle Light 2</button>
+
+      <button onClick={lightBothToggle}>Toggle Both Lights</button>
     </div>
   );
 };
 
 const mapStateToProps = (state) => ({
-  light1: state.bedroom.light1,
-  light2: state.bedroom.light2,
+  light1Status: state.bedroom.light1Status,
+  light2Status: state.bedroom.light2Status,
 });
 
 const mapDispatchToProps = {
-  turnOnLight,
-  turnOffLight,
+  toggleLight1,
+  toggleLight2,
   toggleBothLights,
 };
 
